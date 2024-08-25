@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}    {# 定义 head 块 #}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> {# 控制视口的宽度：width=device-width 指定视口的宽度等于设备的宽度。这意味着网页会根据用户设备的屏幕宽度进行缩放，从而确保在不同设备上（如手机、平板和桌面）都能良好显示。 初始缩放级别：initial-scale=1.0 设置页面的初始缩放级别为1.0，即不进行缩放。用户打开网页时，页面会以100%的比例显示。 #}
+    <title>{{ user.name }}'s Watchlist</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
+    {% endblock %}
+</head>
+<body>
+    <!-- 插入到页面标题上方 -->
+    {% for message in get_flashed_messages() %}
+    <div class="alert">{{ message }}</div>
+    {% endfor %}
+    <h2>
+        <img alt="Avatar" class="avatar" src="{{ url_for('static', filename='images/avatar.png') }}">
+        {{ user.name }}'s Watchlist
+    </h2>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            {% if current_user.is_authenticated %}
+            <li><a href="{{ url_for('settings') }}">Settings</a></li>
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            {% else %}
+            <li><a href="{{ url_for('login') }}">Login</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% block content %}{% endblock %}   {# 定义 content 块 #}
+    <footer>
+        <small>&copy; 2018 <a href="http://helloflask.com/book/3">HelloFlask</a></small>
+    </footer>
+</body>
+</html>
