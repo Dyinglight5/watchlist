@@ -15,7 +15,7 @@ if WIN:  # 如果是 Windows 系统，使用三个斜线
 else:  # 否则使用四个斜线
     prefix = 'sqlite:////'
 app.config['SQLALCHEMY_DATABASE_URI'] = prefix + os.path.join(os.path.dirname(app.root_path), os.getenv('DATABASE_FILE', 'data.db'))
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev')
+app.config['SECRET_KEY'] = 'dev'
 db = SQLAlchemy(app)  # 初始化扩展，传入程序实例 app
 login_manager=LoginManager(app)
 login_manager.login_view = 'login'#设置登录页面的端点(函数名),当用户未登录时，访问需要登录的页面时会自动跳转到这里
@@ -64,6 +64,15 @@ def forge():
 
     db.session.commit()
     click.echo('Done.')
+
+@app.cli.command()  # 注册为命令，可以传入 name 参数来自定义命令
+@click.option('--drop', is_flag=True, help='Create after drop.')  # 设置选项
+def initdb(drop):
+    """Initialize the database."""
+    if drop:  # 判断是否输入了选项
+        db.drop_all()
+    db.create_all()
+    click.echo('Initialized database.')  # 输出提示信息
 
 @app.cli.command()
 @click.option('--username', prompt=True, help='The username used to login.')
